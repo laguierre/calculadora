@@ -2,8 +2,10 @@ package com.example.calculadora;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String RESULT_VALUE = "Resultado";
     private EditText etNumber1;
     private EditText etNumber2;
     private TextView tvResult;
@@ -37,17 +40,23 @@ public class MainActivity extends AppCompatActivity {
         btnOperation.setOnClickListener((view -> {
             etNumber1.onEditorAction(EditorInfo.IME_ACTION_DONE);
             etNumber2.onEditorAction(EditorInfo.IME_ACTION_DONE);
-            Calculate();
+            double result = Calculate();
+            //tvResult.setText("Resultado: " + result);
+            /**
+             * @brief Mostrar el mensaje en otra pantalla
+             */
+            Intent intent = new Intent(this, resultActivity.class);
+            intent.putExtra(RESULT_VALUE, Double.toString(result));
+            startActivity(intent);
         }));
     }
 
-    private void Calculate() {
+    private double Calculate() {
         double number1 = Double.parseDouble(etNumber1.getText().toString());
         double number2 = Double.parseDouble(etNumber2.getText().toString());
-        double result = 0;
-
 
         String selectedOP = spOp.getSelectedItem().toString();
+        double result = 0.0;
         switch (selectedOP) {
             case "+":
                 result = number1 + number2;
@@ -70,16 +79,16 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             default:
-                result = 0;
+                result = 0.0;
         }
-        tvResult.setText("Resultado: " + result);
+        return result;
     }
 
     @Override
     protected void onStop() {
         etNumber1.setText("");
         etNumber2.setText("");
-        tvResult.setText("Resultado: ");
+        //tvResult.setText("Resultado: ");
         super.onStop();
     }
 }
